@@ -9,6 +9,23 @@
 #include "matrix.h"
 #include "parser.h"
 
+/*-------------- int * parse_args() --------------
+Inputs:  char * str
+Returns: char **
+
+Splits a string on spaces and adds each argument to the array;
+*/
+char ** parse_args(char * str){
+  short counter = 0;
+  char ** arr = (char **)malloc(sizeof(char *) * 7);
+  char * tmp;
+  while((tmp = strsep(&str, " "))){
+    arr[counter] = tmp;
+    counter++;
+  }
+  arr[counter]=0;
+  return arr;
+} 
 
 /*======== void parse_file () ==========
 Inputs:   char * filename 
@@ -29,7 +46,7 @@ The file follows the following format:
 	    then multiply the transform matrix by the scale matrix - 
 	    takes 3 arguments (sx, sy, sz)
 	 translate: create a translation matrix, 
-	    then multiply the transform matrix by the translation matrix - 
+	    then multiply the transform matrix by the translation matrix - x
 	    takes 3 arguments (tx, ty, tz)
 	 rotate: create an rotation matrix,
 	    then multiply the transform matrix by the rotation matrix -
@@ -60,6 +77,13 @@ void parse_file ( char * filename,
   FILE *f;
   char line[256];
   clear_screen(s);
+  char ** arg_arr;
+  struct matrix * tmp_mat;
+
+  color c;
+  c.red = 150;
+  c.green = 150;
+  c.blue = 150;
 
   if ( strcmp(filename, "stdin") == 0 ) 
     f = stdin;
@@ -69,6 +93,76 @@ void parse_file ( char * filename,
   while ( fgets(line, 255, f) != NULL ) {
     line[strlen(line)-1]='\0';
     printf(":%s:\n",line);
+    if (!strcmp(line, "line")){
+        fgets(line, 255, f);
+        line[strlen(line)-1]='\0';
+        arg_arr = parse_args(line);
+        add_edge(edges, atof(arg_arr[0]), atof(arg_arr[1]), atof(arg_arr[2]), atof(arg_arr[3]), atof(arg_arr[4]), atof(arg_arr[5]));
+        free(arg_arr);
+    }
+    else if (!strcmp(line, "scale")){
+        fgets(line, 255, f);
+        line[strlen(line)-1]='\0';
+        arg_arr = parse_args(line);
+        tmp_mat = make_scale(atof(arg_arr[0]), atof(arg_arr[1]), atof(arg_arr[2]));
+        matrix_mult(tmp_mat, transform);
+        free(tmp_mat);
+        free(arg_arr);
+    }
+    else if (!strcmp(line, "move")){
+        fgets(line, 255, f);
+        line[strlen(line)-1]='\0';
+        arg_arr = parse_args(line);
+        tmp_mat = make_translate(atof(arg_arr[0]), atof(arg_arr[1]), atof(arg_arr[2]));
+        matrix_mult(tmp_mat, transform);
+        free(tmp_mat);
+        free(arg_arr);
+    }
+    else if (!strcmp(line, "rotate")){
+        fgets(line, 255, f);
+        line[strlen(line)-1]='\0';
+        arg_arr = parse_args(line);
+        if(!strcmp(arg_arr[0],"x")){
+            tmp_mat = make_rotX(atof(arg_arr[1]));
+        }
+        else if(!strcmp(arg_arr[0], "y")){
+            tmp_mat = make_rotY(atof(arg_arr[1]));
+        }
+        else if(!strcmp(arg_arr[0], "z")){
+            tmp_mat = make_rotZ(atof(arg_arr[1]));
+        }
+        else{
+            printf("Error: unknown axis of rotation\n");
+        }
+        matrix_mult(tmp_mat, transform);
+        free(tmp_mat);
+        free(arg_arr);
+    }
+    else if (!strcmp(line, "save")){
+        fgets(line, 255, f);
+        line[strlen(line)-1]='\0';
+        arg_arr = parse_args(line);
+        save_extension(s, arg_arr[0]);
+        free(arg_arr);
+    }
+    else if (!strcmp(line, "ident")){
+        ident(transform);
+    }
+    else if (!strcmp(line, "apply")){
+        matrix_mult(transform, edges);
+        ident(transform);
+    }
+    else if (!strcmp(line, "display")){
+        draw_lines(edges, s, c);
+        display(s);
+        clear_screen(s);
+    }
+    else if (!strcmp(line, "quit")){
+        exit(1);
+    }
+    else{
+        printf("Error: Unknown Command\n");
+    }
   }
 }
   

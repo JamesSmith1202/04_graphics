@@ -2,8 +2,25 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "draw.h"
 #include "matrix.h"
 
+/*======== void add_point1() ==========
+Inputs:   struct matrix * points
+         double x
+         double y
+         double z
+         double a 
+Returns: 
+adds point (x, y, z, a) to points and increment points.lastcol
+====================*/
+void add_point1(struct matrix * points, double x, double y, double z, double a){
+  points->m[0][ points->lastcol ] = x;
+  points->m[1][ points->lastcol ] = y;
+  points->m[2][ points->lastcol ] = z;
+  points->m[3][ points->lastcol ] = a;
+  points->lastcol++;
+}
 
 /*======== struct matrix * make_translate() ==========
 Inputs:  int x
@@ -13,7 +30,12 @@ Returns: The translation matrix created using x, y and z
 as the translation offsets.
 ====================*/
 struct matrix * make_translate(double x, double y, double z) {
-  return NULL;
+  struct matrix * trans_mat = new_matrix(4, 4);
+  add_point1(trans_mat, 1, 0, 0, 0);
+  add_point1(trans_mat, 0, 1, 0, 0);
+  add_point1(trans_mat, 0, 0, 1, 0);
+  add_point1(trans_mat, x, y, z, 1);
+  return trans_mat;
 }
 
 /*======== struct matrix * make_scale() ==========
@@ -24,7 +46,12 @@ Returns: The translation matrix creates using x, y and z
 as the scale factors
 ====================*/
 struct matrix * make_scale(double x, double y, double z) {
-  return NULL;
+  struct matrix * scale_mat = new_matrix(4, 4);
+  add_point1(scale_mat, x, 0, 0, 0);
+  add_point1(scale_mat, 0, y, 0, 0);
+  add_point1(scale_mat, 0, 0, z, 0);
+  add_point1(scale_mat, 0, 0, 0, 1);
+  return scale_mat;
 }
 
 /*======== struct matrix * make_rotX() ==========
@@ -34,7 +61,13 @@ Returns: The rotation matrix created using theta as the
 angle of rotation and X as the axis of rotation.
 ====================*/
 struct matrix * make_rotX(double theta) {
-  return NULL;
+  double theta_radians = (theta * M_PI)/180;//convert to radians for C degrees function
+  struct matrix * rot_mat = new_matrix(4, 4);
+  add_point1(rot_mat, 1, 0, 0, 0);
+  add_point1(rot_mat, 0, cos(theta_radians), sin(theta_radians), 0);
+  add_point1(rot_mat, 0, -sin(theta_radians), cos(theta_radians), 0);
+  add_point1(rot_mat, 0, 0, 0, 1);
+  return rot_mat;
 }
 
 /*======== struct matrix * make_rotY() ==========
@@ -44,7 +77,13 @@ Returns: The rotation matrix created using theta as the
 angle of rotation and Y as the axis of rotation.
 ====================*/
 struct matrix * make_rotY(double theta) {
-  return NULL;
+  double theta_radians = (theta * M_PI)/180;//convert to radians for C degrees function
+  struct matrix * rot_mat = new_matrix(4, 4);
+  add_point1(rot_mat, cos(theta_radians), 0, -sin(theta_radians), 0);
+  add_point1(rot_mat, 0, 1, 0, 0);
+  add_point1(rot_mat, sin(theta_radians), 0, cos(theta_radians), 0);
+  add_point1(rot_mat, 0, 0, 0, 1);
+  return rot_mat;
 }
 
 /*======== struct matrix * make_rotZ() ==========
@@ -54,7 +93,13 @@ Returns: The rotation matrix created using theta as the
 angle of rotation and Z as the axis of rotation.
 ====================*/
 struct matrix * make_rotZ(double theta) {
-  return NULL;
+  double theta_radians = (theta * M_PI)/180;//convert to radians for C degrees function
+  struct matrix * rot_mat = new_matrix(4, 4);
+  add_point1(rot_mat, cos(theta_radians), sin(theta_radians), 0, 0);
+  add_point1(rot_mat, -sin(theta_radians), cos(theta_radians), 0, 0);
+  add_point1(rot_mat, 0, 0, 1, 0);
+  add_point1(rot_mat, 0, 0, 0, 1);
+  return rot_mat;
 }
 
 
