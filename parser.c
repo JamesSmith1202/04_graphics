@@ -96,6 +96,7 @@ void parse_file ( char * filename,
     if (!strcmp(line, "line")){
         fgets(line, 255, f);
         line[strlen(line)-1]='\0';
+        printf(":%s:\n",line);
         arg_arr = parse_args(line);
         add_edge(edges, atof(arg_arr[0]), atof(arg_arr[1]), atof(arg_arr[2]), atof(arg_arr[3]), atof(arg_arr[4]), atof(arg_arr[5]));
         free(arg_arr);
@@ -103,6 +104,7 @@ void parse_file ( char * filename,
     else if (!strcmp(line, "scale")){
         fgets(line, 255, f);
         line[strlen(line)-1]='\0';
+        printf(":%s:\n",line);
         arg_arr = parse_args(line);
         tmp_mat = make_scale(atof(arg_arr[0]), atof(arg_arr[1]), atof(arg_arr[2]));
         matrix_mult(tmp_mat, transform);
@@ -112,6 +114,7 @@ void parse_file ( char * filename,
     else if (!strcmp(line, "move")){
         fgets(line, 255, f);
         line[strlen(line)-1]='\0';
+        printf(":%s:\n",line);
         arg_arr = parse_args(line);
         tmp_mat = make_translate(atof(arg_arr[0]), atof(arg_arr[1]), atof(arg_arr[2]));
         matrix_mult(tmp_mat, transform);
@@ -121,6 +124,7 @@ void parse_file ( char * filename,
     else if (!strcmp(line, "rotate")){
         fgets(line, 255, f);
         line[strlen(line)-1]='\0';
+        printf(":%s:\n",line);
         arg_arr = parse_args(line);
         if(!strcmp(arg_arr[0],"x")){
             tmp_mat = make_rotX(atof(arg_arr[1]));
@@ -141,9 +145,10 @@ void parse_file ( char * filename,
     else if (!strcmp(line, "save")){
         fgets(line, 255, f);
         line[strlen(line)-1]='\0';
-        arg_arr = parse_args(line);
-        save_extension(s, arg_arr[0]);
-        free(arg_arr);
+        printf(":%s:\n",line);
+        draw_lines(edges, s, c);
+        save_extension(s, line);
+        clear_screen(s);
     }
     else if (!strcmp(line, "ident")){
         ident(transform);
@@ -160,7 +165,7 @@ void parse_file ( char * filename,
     else if (!strcmp(line, "quit")){
         exit(1);
     }
-    else{
+    else{   
         printf("Error: Unknown Command\n");
     }
   }
