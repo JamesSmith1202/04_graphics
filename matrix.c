@@ -84,6 +84,7 @@ struct matrix * make_rotY(double theta) {
   add_point1(rot_mat, sin(theta_radians), 0, cos(theta_radians), 0);
   add_point1(rot_mat, 0, 0, 0, 1);
   return rot_mat;
+
 }
 
 /*======== struct matrix * make_rotZ() ==========
@@ -93,13 +94,21 @@ Returns: The rotation matrix created using theta as the
 angle of rotation and Z as the axis of rotation.
 ====================*/
 struct matrix * make_rotZ(double theta) {
-  double theta_radians = (theta * M_PI)/180;//convert to radians for C degrees function
+  /*double theta_radians = (theta * M_PI)/180;//convert to radians for C degrees function
   struct matrix * rot_mat = new_matrix(4, 4);
   add_point1(rot_mat, cos(theta_radians), sin(theta_radians), 0, 0);
   add_point1(rot_mat, -sin(theta_radians), cos(theta_radians), 0, 0);
   add_point1(rot_mat, 0, 0, 1, 0);
   add_point1(rot_mat, 0, 0, 0, 1);
-  return rot_mat;
+  return rot_mat;*/
+  theta = (theta*M_PI)/180;
+  struct matrix *t = new_matrix(4, 4);
+  ident(t);
+  t->m[0][0] = cos(theta);
+  t->m[0][1] = -1 * sin(theta);
+  t->m[1][0] = sin(theta);
+  t->m[1][1] = cos(theta);
+  return t;
 }
 
 
